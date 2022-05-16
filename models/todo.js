@@ -10,4 +10,4 @@ const todoSchema = new Schema({
   done: Boolean,
 })
 
-module.exports = Model('todo', todoSchema)
+module.exports = Model('Todo', todoSchema)
