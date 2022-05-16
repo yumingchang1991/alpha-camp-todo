@@ -1,4 +1,6 @@
 const express = require('express')
+const mongoDb = require('./connection.js')
+const todoSchema = require('./models/todo.js')
 const { engine } = require('express-handlebars')
 const app = express()
 const port = 3000
