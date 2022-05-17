@@ -26,6 +26,14 @@ app.route('/todos/new')
     res.render('new')
   })
 
+app.route('/todos/:id')
+  .get((req, res) => {
+    Todo.findById(req.params.id)
+      .lean()  
+      .then(todo => res.render('detail', { todo }))
+      .catch(error => console.error(error))
+  })
+
 app.route('/todos')
   .post((req, res) => {
     Todo.create({
