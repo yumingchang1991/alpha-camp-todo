@@ -14,33 +14,54 @@ app.use(express.urlencoded({ extended: false }))
 
 app.route('/')
   .get((req, res) => {
-    Todo
+    return Todo
       .find()
       .lean()
       .then( todos => res.render('index', { todos }))
       .catch( error => console.error(error))
   })
 
+app.route('/todos')
+  .post((req, res) => {
+    return Todo.create({
+      name: req.body.name
+    })
+      .then(() => res.redirect('/'))
+      .catch(error => console.error(error))
+  })
+
 app.route('/todos/new')
   .get((req, res) => {
-    res.render('new')
+    return res.render('new')
   })
 
 app.route('/todos/:id')
   .get((req, res) => {
-    Todo.findById(req.params.id)
+    return Todo.findById(req.params.id)
       .lean()  
       .then(todo => res.render('detail', { todo }))
       .catch(error => console.error(error))
   })
 
-app.route('/todos')
-  .post((req, res) => {
-    Todo.create({
-      name: req.body.name
-    })
-      .then(() => res.redirect('/'))
+app.route('/todos/:id/edit')
+  .get((req, res) => {
+    return Todo.findById(req.params.id)
+      .lean()
+      .then(todo => res.render('edit', { todo }))
       .catch(error => console.error(error))
+  })
+
+app.route('/todos/:id/edit')
+  .post((req, res) => {
+    const id = req.params.id
+    const name = req.body.name
+    return Todo.findById(id)
+      .then((todo) => {
+        todo.name = name
+        return todo.save()
+      })
+      .then(() => res.redirect(`/todos/${id}`))
+      .catch((error) => console.error(error))
   })
 
 app.listen(port, () => console.log(`Express is listening on localhost:${port}`))
