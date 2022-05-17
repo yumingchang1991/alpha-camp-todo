@@ -64,4 +64,13 @@ app.route('/todos/:id/edit')
       .catch((error) => console.error(error))
   })
 
+app.route('/todos/:id/delete')
+  .post((req, res) => {
+    const id = req.params.id
+    return Todo.findById(id)
+      .then(todo => todo.remove())
+      .then(() => res.redirect('/'))
+      .catch(error => console.log(error))
+  })
+
 app.listen(port, () => console.log(`Express is listening on localhost:${port}`))
