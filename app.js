@@ -5,7 +5,7 @@ const methodOverride = require('method-override')
 
 const mongoDb = require('./connection.js')
 const Todo = require('./models/todo.js')
-const { find } = require('./models/todo.js')
+const routes = require('./routes')
 
 const app = express()
 const port = 3000
@@ -16,15 +16,7 @@ app.set('view engine', 'handlebars')
 app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
 
-app.route('/')
-  .get((req, res) => {
-    return Todo
-      .find()
-      .sort({ _id: 'asc' })
-      .lean()
-      .then( todos => res.render('index', { todos }))
-      .catch( error => console.error(error))
-  })
+app.use(routes)
 
 app.route('/todos')
   .post((req, res) => {
