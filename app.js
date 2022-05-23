@@ -3,7 +3,7 @@ const { urlencoded } = require('express')
 const { engine } = require('express-handlebars')
 const methodOverride = require('method-override')
 
-const mongoDb = require('./connection.js')
+const mongoDb = require('./config/mongoose.js')
 const Todo = require('./models/todo.js')
 const routes = require('./routes')
 
