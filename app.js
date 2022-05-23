@@ -16,6 +16,7 @@ app.route('/')
   .get((req, res) => {
     return Todo
       .find()
+      .sort({ _id: 'asc' })
       .lean()
       .then( todos => res.render('index', { todos }))
       .catch( error => console.error(error))
