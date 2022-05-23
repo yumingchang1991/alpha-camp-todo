@@ -7,7 +7,10 @@ const todoSchema = new Schema({
     type: String,
     required: true
   },
-  done: Boolean,
+  isDone: {
+    type: Boolean,
+    default: false
+  }
 })
 
 module.exports = Model('Todo', todoSchema)
