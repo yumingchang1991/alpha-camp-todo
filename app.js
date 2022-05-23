@@ -1,9 +1,12 @@
 const express = require('express')
+const { urlencoded } = require('express')
+const { engine } = require('express-handlebars')
+const methodOverride = require('method-override')
+
 const mongoDb = require('./connection.js')
 const Todo = require('./models/todo.js')
-const { engine } = require('express-handlebars')
 const { find } = require('./models/todo.js')
-const { urlencoded } = require('express')
+
 const app = express()
 const port = 3000
 
@@ -11,6 +14,7 @@ app.engine('handlebars', engine({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 app.use(express.urlencoded({ extended: false }))
+app.use(methodOverride('_method'))
 
 app.route('/')
   .get((req, res) => {
@@ -52,8 +56,8 @@ app.route('/todos/:id/edit')
       .catch(error => console.error(error))
   })
 
-app.route('/todos/:id/edit')
-  .post((req, res) => {
+app.route('/todos/:id')
+  .put((req, res) => {
     const id = req.params.id
     const { name, isDone } = req.body
     return Todo.findById(id)
@@ -66,8 +70,8 @@ app.route('/todos/:id/edit')
       .catch((error) => console.error(error))
   })
 
-app.route('/todos/:id/delete')
-  .post((req, res) => {
+app.route('/todos/:id')
+  .delete((req, res) => {
     const id = req.params.id
     return Todo.findById(id)
       .then(todo => todo.remove())
