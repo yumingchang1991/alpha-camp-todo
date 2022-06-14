@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const session = require('express-session')
 const { urlencoded } = require('express')
 const { engine } = require('express-handlebars')
 const methodOverride = require('method-override')
@@ -16,9 +17,13 @@ const PORT = process.env.PORT || 3000
 app.engine('handlebars', engine({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
+app.use(session({
+  secret: 'ThisIsMySecret',
+  resave: false,
+  saveUninitialized: true
+}))
 app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
-
 app.use(routes)
 
 app.listen(PORT, () => console.log(`Express is listening on localhost:${PORT}`))
