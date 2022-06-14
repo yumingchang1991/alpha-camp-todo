@@ -4,6 +4,7 @@ const session = require('express-session')
 const { urlencoded } = require('express')
 const { engine } = require('express-handlebars')
 const methodOverride = require('method-override')
+const flash = require('connect-flash')
 
 const mongoDb = require('./config/mongoose.js')
 const Todo = require('./models/todo.js')
@@ -28,9 +29,12 @@ app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
 
 usePassport(app)
+app.use(flash())
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
+  res.locals.success_msg = req.flash('success_msg')
+  res.locals.warning_msg = req.flash('warning_msg')
   next()
 })
 
