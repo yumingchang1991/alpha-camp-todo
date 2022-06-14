@@ -9,6 +9,8 @@ const mongoDb = require('./config/mongoose.js')
 const Todo = require('./models/todo.js')
 const routes = require('./routes')
 
+const usePassport = require('./config/passport')
+
 const app = express()
 const PORT = process.env.PORT || 3000 
 // process.env.PORT is provided by Heroku
@@ -24,6 +26,9 @@ app.use(session({
 }))
 app.use(express.urlencoded({ extended: false }))
 app.use(methodOverride('_method'))
+
+usePassport(app)
+
 app.use(routes)
 
 app.listen(PORT, () => console.log(`Express is listening on localhost:${PORT}`))
