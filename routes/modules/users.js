@@ -3,7 +3,7 @@ const passport = require('passport')
 const User = require('../../models/user')
 
 router.get('/login', (req, res) => {
-  res.render('login')
+  res.render('login', { loginError: req.flash('loginError') })
 })
 router.post(
   '/login',
