@@ -1,4 +1,5 @@
 const passport = require('passport')
+const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy
 
 const User = require('../models/user')
@@ -7,25 +8,32 @@ module.exports = app => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  passport.use(new LocalStrategy({ usernameField: 'email', passReqToCallback: true }, ( req, email, password, done) => {
-    User.findOne({ email })
-      .then(user => {
-        if (!user) {
-          const errorMessage = "this email is not registered!"
-          req.errorMessage = errorMessage
-          req.flash('loginError', errorMessage)
-          return done(null, false, { message: errorMessage })
-        }
-        if (user.password !== password) {
-          const errorMessage = "incorrect password!"
-          req.errorMessage = errorMessage
-          req.flash('loginError', errorMessage)
-          return done(null, false, { message: errorMessage })
-        }
-        return done(null, user)
-      })
-      .catch(err => done(err))
-  }))
+  passport.use(
+    new LocalStrategy({ usernameField: 'email', passReqToCallback: true }, 
+    ( req, email, password, done) => {
+      User.findOne({ email })
+        .then(user => {
+          if (!user) {
+            const errorMessage = "this email is not registered!"
+            req.errorMessage = errorMessage
+            req.flash('loginError', errorMessage)
+            return done(null, false, { message: errorMessage })
+          }
+          return bcrypt.compare(password, user.password)
+          .then(isMatch => {
+            if (!isMatch) {
+              const errorMessage = "incorrect password!"
+              req.errorMessage = errorMessage
+              req.flash('loginError', errorMessage)
+              return done(null, false, { message: errorMessage })
+            }
+            return done(null, user)
+          })
+          .catch(err => done(err))
+        })
+      }
+    )
+  )
 
   passport.serializeUser((user, done) => {
     done(null, user.id)
